@@ -8,7 +8,7 @@ set(STD_DIR /usr/lib/llvm/21/share/libc++/v1)
 set(MODULES src/sdl2.cppm ${STD_DIR}/std.cppm)
 
 cmake_minimum_required(VERSION 3.30)
-project(sdl2-cpp)
+project(sdl2-cppm)
 
 add_executable(test test/test.cpp)
 target_link_libraries(test PRIVATE SDL2)
