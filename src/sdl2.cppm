@@ -5,15 +5,31 @@ module;
 export module sdl2;
 import std;
 
+using std::hash;
+using std::uint32_t;
+using std::int32_t;
+using std::uint8_t;
+using std::size_t;
+using std::shared_ptr;
+using std::runtime_error;
+using std::string;
+using std::is_scoped_enum_v;
+using std::filesystem::path;
+using std::println;
+using std::optional;
+using std::nullopt;
+using std::enable_shared_from_this;
+using std::string_view;
+
 #include "enums.inc"
 
 #define ERR(msg)\
-	std::runtime_error(std::string(msg) + std::string(SDL_GetError()))
+	runtime_error(string(msg) + string(SDL_GetError()))
 
 namespace sdl2 {
 
 export template<typename T>
-concept EnumClass = std::is_scoped_enum_v<T>;
+concept EnumClass = is_scoped_enum_v<T>;
 
 export template<EnumClass E>
 constexpr auto operator+(const E& e) {
@@ -35,7 +51,7 @@ constexpr bool operator&(const E& e1, const E& e2) {
 	return (+e1 & +e2) == +e1;
 }
 
-std::string get_error() {
+string get_error() {
 	return SDL_GetError();
 }
 
@@ -56,17 +72,17 @@ export class Renderer;
 }
 
 export struct Point {
-	int x, y;
+	int32_t x, y;
 private:
 	friend class renderer::Renderer;
 	auto to_sdl_point() const {
-		return SDL_Point{x, y};
+		return SDL_Point{static_cast<int>(x), static_cast<int>(y)};
 	}
 };
 
 export struct PointHash {
-	std::size_t operator()(const sdl2::Point& p) const {
-		return std::hash<int>{}(p.x) ^ (std::hash<int>{}(p.y) << 1);
+	size_t operator()(const Point& p) const {
+		return hash<int32_t>{}(p.x) ^ (hash<int32_t>{}(p.y) << 1);
 	}
 };
 
@@ -90,17 +106,26 @@ export constexpr bool operator<(const Point& p1, const Point& p2) noexcept {
 	}
 }
 
+export struct Dimensions {
+	uint32_t w, h;
+};
+
 export struct Rect {
-	int x, y, w, h;
+	int32_t x, y;
+	uint32_t w, h;
+	Rect(int32_t x, int32_t y, uint32_t w, uint32_t h) :
+		x(x), y(y), w(w), h(h) {}
+	Rect(Point position, Dimensions dimensions) :
+		x(position.x), y(position.y), w(dimensions.w), h(dimensions.h) {}
 private:
 	friend class renderer::Renderer;
 	auto to_sdl_rect() const {
-		return SDL_Rect{x, y, w, h};
+		return SDL_Rect{x, y, static_cast<int>(w), static_cast<int>(h)};
 	}
 };
 
 export struct Color {
-	std::uint8_t r, g, b, a;
+	uint8_t r, g, b, a;
 private:
 	friend class renderer::Renderer;
 	auto to_sdl_color() const {
@@ -108,17 +133,13 @@ private:
 	}
 };
 
-export struct Dimensions {
-	int w, h;
-};
-
 export class Timer {
 private:
-	friend class sdl2::Sdl;
-	const std::shared_ptr<const sdl2::Sdl> sdl;
-	Timer(const std::shared_ptr<const Sdl> sdl) : sdl(sdl) {}
+	friend class Sdl;
+	const shared_ptr<const Sdl> sdl;
+	Timer(const shared_ptr<const Sdl> sdl) : sdl(sdl) {}
 public:
-	std::uint32_t ticks() const {
+	uint32_t ticks() const {
 		return SDL_GetTicks();
 	}
 };
@@ -128,13 +149,13 @@ namespace event {
 // this should be a pod
 export class MouseState {
 private:
-	SDL_Point position;
+	Point position;
 	bool left_button;
 	bool right_button;
 	bool middle_button;
 	friend class Event;
 	MouseState(
-		SDL_Point pos,
+		Point pos,
 		bool left,
 		bool right,
 		bool middle
@@ -160,8 +181,8 @@ export class Event {
 private:
 	friend class sdl2::Sdl;
 	SDL_Event event;
-	const std::shared_ptr<const sdl2::Sdl> sdl;
-	Event(const std::shared_ptr<const sdl2::Sdl> sdl) : sdl(sdl) {}
+	const shared_ptr<const Sdl> sdl;
+	Event(const shared_ptr<const Sdl> sdl) : sdl(sdl) {}
 public:
 	int poll() {
 		return SDL_PollEvent(&event);
@@ -194,7 +215,10 @@ public:
 		if (ms & SDL_BUTTON(SDL_BUTTON_LEFT)) left = true;
 		if (ms & SDL_BUTTON(SDL_BUTTON_MIDDLE)) middle = true;
 		if (ms & SDL_BUTTON(SDL_BUTTON_RIGHT)) right = true;
-		return MouseState({x, y}, left, right, middle);
+		return MouseState(
+			{static_cast<int32_t>(x), y},
+			left, right, middle
+		);
 	}
 };
 
@@ -213,7 +237,7 @@ public:
 	Surface(Surface&&) = delete;
 	Surface& operator=(const Surface&) = delete;
 	Surface& operator=(Surface&&) = delete;
-	static auto load_bmp(std::filesystem::path path) {
+	static auto load_bmp(path path) {
 		auto sur = SDL_LoadBMP(path.c_str());
 		if (!sur) throw ERR("Failed to load bmp.");
 		return Surface(sur);
@@ -241,7 +265,7 @@ public:
 	~Texture() {
 		if (tex) {
 			SDL_DestroyTexture(tex);
-			std::println("texture destroyed.");
+			println("texture destroyed.");
 		}
 	}
 };
@@ -251,9 +275,9 @@ namespace renderer {
 export class Renderer {
 private:
 	friend class window::Window;
-	const std::shared_ptr<const window::Window> win;
+	const shared_ptr<const window::Window> win;
 	SDL_Renderer* ren;
-	Renderer(const std::shared_ptr<const window::Window> win, SDL_Renderer* ren) :
+	Renderer(const shared_ptr<const window::Window> win, SDL_Renderer* ren) :
 		win(win), ren(ren) {}
 public:
 	Renderer(const Renderer&) = delete;
@@ -265,7 +289,7 @@ public:
 		if (!tex) throw ERR("Failed to create texture from surface.");
 		return Texture(tex);
 	}
-	auto texture(std::filesystem::path path_to_bmp) const {
+	auto texture(path path_to_bmp) const {
 		return texture(Surface::load_bmp(path_to_bmp));
 	}
 	void set_draw_color(Color color) const {
@@ -294,7 +318,7 @@ public:
 		if (SDL_SetTextureBlendMode(tex.get(), bm))
 			throw ERR("Failed to set texture blend mode.");
 	}
-	void set_texture_alpha_mod(const Texture& tex, std::uint8_t alpha) const {
+	void set_texture_alpha_mod(const Texture& tex, uint8_t alpha) const {
 		if (SDL_SetTextureAlphaMod(tex.get(), alpha))
 			throw ERR("Failed to set texture alpha mode.");
 	}
@@ -302,7 +326,7 @@ public:
 		if (SDL_SetTextureColorMod(tex.get(), color.r, color.g, color.b))
 			throw ERR("Failed to set texture color mode.");
 	}
-	void fill_rect(std::optional<Rect> rect) const {
+	void fill_rect(optional<Rect> rect) const {
 		SDL_Rect r = rect.value_or(Rect{0, 0, 0, 0}).to_sdl_rect();
 		SDL_Rect *rptr = rect.has_value() ? &r : nullptr;
 		if (SDL_RenderFillRect(ren, rptr))
@@ -310,10 +334,10 @@ public:
 	}
 	void copy(
 		const Texture& tex,
-		std::optional<Rect> dstrect = std::nullopt,
-		std::optional<Rect> srcrect = std::nullopt,
+		optional<Rect> dstrect = nullopt,
+		optional<Rect> srcrect = nullopt,
 		float angle = 0.0f,
-		std::optional<Point> center = std::nullopt,
+		optional<Point> center = nullopt,
 		Flip flip = Flip::NONE
 	) const {
 		SDL_Rect src = srcrect.value_or(Rect{0, 0, 0, 0}).to_sdl_rect();
@@ -335,12 +359,12 @@ public:
 
 namespace window {
 
-export class Window : public std::enable_shared_from_this<Window> {
+export class Window : public enable_shared_from_this<Window> {
 private:
 	friend class sdl2::Sdl;
-	const std::shared_ptr<const sdl2::Sdl> sdl;
+	const shared_ptr<const Sdl> sdl;
 	SDL_Window* win;
-	Window(const std::shared_ptr<const sdl2::Sdl> sdl, SDL_Window* win) :
+	Window(const shared_ptr<const Sdl> sdl, SDL_Window* win) :
 		sdl(sdl), win(win) {}
 public:
 	Window(const Window&) = delete;
@@ -359,7 +383,7 @@ public:
 
 }
 	
-export class Sdl : public std::enable_shared_from_this<Sdl> {
+export class Sdl : public enable_shared_from_this<Sdl> {
 private:
 	Sdl() {
 		if (SDL_Init(SDL_INIT_EVERYTHING))
@@ -371,13 +395,13 @@ public:
 	Sdl& operator=(const Sdl&) = delete;
 	Sdl& operator=(Sdl&&) = delete;
 	static auto init() {
-		return std::shared_ptr<Sdl>(new Sdl);
+		return shared_ptr<Sdl>(new Sdl);
 	}
-	auto window(std::string_view title, int w, int h, window::Flags flag) const {
+	auto window(string_view title, int w, int h, window::Flags flag) const {
 		auto f = static_cast<SDL_WindowFlags>(flag);
 		auto win = SDL_CreateWindow(title.data(), 0, 0, w, h, f);
 		if (!win) throw ERR("Failed to create window.");
-		return std::shared_ptr<window::Window>(new window::Window(shared_from_this(), win));
+		return shared_ptr<window::Window>(new window::Window(shared_from_this(), win));
 	}
 	auto event() const {
 		return event::Event(shared_from_this());
