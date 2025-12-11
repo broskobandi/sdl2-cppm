@@ -1,3 +1,0 @@
--x c++-module
--fmodule-output=CMakeFiles/test.dir/sdl2.pcm
--fmodule-file=std=CMakeFiles/test.dir/std.pcm

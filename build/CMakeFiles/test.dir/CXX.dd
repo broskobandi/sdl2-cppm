@@ -1,9 +1,0 @@
-ninja_dyndep_version = 1.0
-build CMakeFiles/test.dir/test/test.cpp.o: dyndep | CMakeFiles/test.dir/sdl2.pcm CMakeFiles/test.dir/std.pcm
-
-build CMakeFiles/test.dir/src/sdl2.cppm.o | CMakeFiles/test.dir/sdl2.pcm: dyndep | CMakeFiles/test.dir/std.pcm
-  restat = 1
-
-build CMakeFiles/test.dir/usr/lib/llvm/21/share/libc++/v1/std.cppm.o | CMakeFiles/test.dir/std.pcm: dyndep
-  restat = 1
-
