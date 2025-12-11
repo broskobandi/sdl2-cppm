@@ -1,0 +1,52 @@
+{
+	"bmi-installation" : null,
+	"compiler-frontend-variant" : "GNU",
+	"compiler-id" : "Clang",
+	"compiler-simulate-id" : "",
+	"config" : "",
+	"cxx-modules" : 
+	{
+		"CMakeFiles/test.dir/src/sdl2.cppm.o" : 
+		{
+			"bmi-only" : false,
+			"destination" : null,
+			"name" : "CXX_MODULES",
+			"relative-directory" : "src",
+			"source" : "/home/broskobandi/Projects/sdl2-cpp/src/sdl2.cppm",
+			"type" : "CXX_MODULES",
+			"visibility" : "PRIVATE"
+		},
+		"CMakeFiles/test.dir/usr/lib/llvm/21/share/libc++/v1/std.cppm.o" : 
+		{
+			"bmi-only" : false,
+			"destination" : null,
+			"name" : "CXX_MODULES",
+			"relative-directory" : "",
+			"source" : "/usr/lib/llvm/21/share/libc++/v1/std.cppm",
+			"type" : "CXX_MODULES",
+			"visibility" : "PRIVATE"
+		}
+	},
+	"database-info" : null,
+	"dir-cur-bld" : "/home/broskobandi/Projects/sdl2-cpp/build",
+	"dir-cur-src" : "/home/broskobandi/Projects/sdl2-cpp",
+	"dir-top-bld" : "/home/broskobandi/Projects/sdl2-cpp/build",
+	"dir-top-src" : "/home/broskobandi/Projects/sdl2-cpp",
+	"exports" : [],
+	"forward-modules-from-target-dirs" : [],
+	"include-dirs" : 
+	[
+		"/home/broskobandi/Projects/sdl2-cpp/src"
+	],
+	"language" : "CXX",
+	"linked-target-dirs" : [],
+	"module-dir" : "/home/broskobandi/Projects/sdl2-cpp/build/CMakeFiles/test.dir",
+	"sources" : 
+	{
+		"CMakeFiles/test.dir/test/test.cpp.o" : 
+		{
+			"language" : "CXX",
+			"source" : "/home/broskobandi/Projects/sdl2-cpp/test/test.cpp"
+		}
+	}
+}

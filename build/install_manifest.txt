@@ -1,0 +1,2 @@
+/usr/lib/cmake/sdl2-cpp/src/sdl2.cppm
+/usr/lib/cmake/sdl2-cpp/src/enums.inc
