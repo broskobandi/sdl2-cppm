@@ -13,6 +13,7 @@ int main(void) {
 		while (ep.poll()) {}
 		ren.clear({30, 70, 70, 255});
 		ren.copy(tex);
+		if (ep.has_keycode(event::KeyCode::q)) std::println("segg");
 		ren.copy(tex, Rect{0, 0, 0, 0}, Rect{0, 0, 0, 0}, 0.0f, Point{0,0}, renderer::Flip::NONE);
 		std::println("{}", timer.ticks());
 		ren.present();
