@@ -146,35 +146,11 @@ public:
 
 namespace event {
 
-// this should be a pod
-export class MouseState {
-private:
-	Point position;
+export struct MouseState {
+	int32_t x, y;
 	bool left_button;
 	bool right_button;
 	bool middle_button;
-	friend class Event;
-	MouseState(
-		Point pos,
-		bool left,
-		bool right,
-		bool middle
-	) :
-		position(pos), left_button(left), right_button(right), middle_button(middle)
-	{}
-public:
-	bool left() const {
-		return left_button;
-	}
-	bool right() const {
-		return right_button;
-	}
-	bool middle() const {
-		return middle_button;
-	}
-	Point pos() const {
-		return Point{position.x, position.y};
-	}
 };
 
 export class Event {
@@ -206,8 +182,8 @@ public:
 		return static_cast<KeyCode>(event.key.keysym.sym);
 	}
 	auto mouse_state() const {
-		int x {0};
-		int y {0};
+		int32_t x {0};
+		int32_t y {0};
 		bool left {false};
 		bool right {false};
 		bool middle {false};
@@ -215,10 +191,9 @@ public:
 		if (ms & SDL_BUTTON(SDL_BUTTON_LEFT)) left = true;
 		if (ms & SDL_BUTTON(SDL_BUTTON_MIDDLE)) middle = true;
 		if (ms & SDL_BUTTON(SDL_BUTTON_RIGHT)) right = true;
-		return MouseState(
-			{static_cast<int32_t>(x), y},
-			left, right, middle
-		);
+		return MouseState{
+			x, y, left, right, middle
+		};
 	}
 };
 
