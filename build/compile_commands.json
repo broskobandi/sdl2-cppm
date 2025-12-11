@@ -1,0 +1,20 @@
+[
+{
+  "directory": "/home/broskobandi/Projects/sdl2-cpp/build",
+  "command": "/usr/bin/clang++ -I/home/broskobandi/Projects/sdl2-cpp/src -stdlib=libc++ -std=c++23 -Wall -Wextra -Wunused-result -Wconversion @CMakeFiles/test.dir/test/test.cpp.o.modmap -o CMakeFiles/test.dir/test/test.cpp.o -c /home/broskobandi/Projects/sdl2-cpp/test/test.cpp",
+  "file": "/home/broskobandi/Projects/sdl2-cpp/test/test.cpp",
+  "output": "/home/broskobandi/Projects/sdl2-cpp/build/CMakeFiles/test.dir/test/test.cpp.o"
+},
+{
+  "directory": "/home/broskobandi/Projects/sdl2-cpp/build",
+  "command": "/usr/bin/clang++ -I/home/broskobandi/Projects/sdl2-cpp/src -stdlib=libc++ -std=c++23 -Wall -Wextra -Wunused-result -Wconversion @CMakeFiles/test.dir/src/sdl2.cppm.o.modmap -o CMakeFiles/test.dir/src/sdl2.cppm.o -c /home/broskobandi/Projects/sdl2-cpp/src/sdl2.cppm",
+  "file": "/home/broskobandi/Projects/sdl2-cpp/src/sdl2.cppm",
+  "output": "/home/broskobandi/Projects/sdl2-cpp/build/CMakeFiles/test.dir/src/sdl2.cppm.o"
+},
+{
+  "directory": "/home/broskobandi/Projects/sdl2-cpp/build",
+  "command": "/usr/bin/clang++ -I/home/broskobandi/Projects/sdl2-cpp/src -stdlib=libc++ -std=c++23 -Wall -Wextra -Wunused-result -Wconversion @CMakeFiles/test.dir/usr/lib/llvm/21/share/libc++/v1/std.cppm.o.modmap -o CMakeFiles/test.dir/usr/lib/llvm/21/share/libc++/v1/std.cppm.o -c /usr/lib/llvm/21/share/libc++/v1/std.cppm",
+  "file": "/usr/lib/llvm/21/share/libc++/v1/std.cppm",
+  "output": "/home/broskobandi/Projects/sdl2-cpp/build/CMakeFiles/test.dir/usr/lib/llvm/21/share/libc++/v1/std.cppm.o"
+}
+]

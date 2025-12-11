@@ -1,0 +1,21 @@
+{
+  "revision": 0,
+  "rules": [
+    {
+      "primary-output": "CMakeFiles/test.dir/src/sdl2.cppm.o",
+      "provides": [
+        {
+          "is-interface": true,
+          "logical-name": "sdl2",
+          "source-path": "/home/broskobandi/Projects/sdl2-cpp/src/sdl2.cppm"
+        }
+      ],
+      "requires": [
+        {
+          "logical-name": "std"
+        }
+      ]
+    }
+  ],
+  "version": 1
+}
