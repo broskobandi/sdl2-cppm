@@ -209,6 +209,10 @@ private:
 	}
 	Surface(SDL_Surface* sur) : sur(sur) {}
 public:
+	Surface(const Surface&) = delete;
+	Surface(Surface&&) = delete;
+	Surface& operator=(const Surface&) = delete;
+	Surface& operator=(Surface&&) = delete;
 	static auto load_bmp(std::filesystem::path path) {
 		auto sur = SDL_LoadBMP(path.c_str());
 		if (!sur) throw ERR("Failed to load bmp.");
@@ -228,8 +232,17 @@ private:
 	}
 	Texture(SDL_Texture* tex) : tex(tex) {}
 public:
+	Texture(const Texture&) = delete;
+	Texture& operator=(const Texture&) = delete;
+	Texture(Texture&& other) : tex(other.tex) {
+		other.tex = nullptr;
+	}
+	Texture& operator=(Texture&&) = delete;
 	~Texture() {
-		if (tex) SDL_DestroyTexture(tex);
+		if (tex) {
+			SDL_DestroyTexture(tex);
+			std::println("texture destroyed.");
+		}
 	}
 };
 
@@ -243,13 +256,17 @@ private:
 	Renderer(const std::shared_ptr<const window::Window> win, SDL_Renderer* ren) :
 		win(win), ren(ren) {}
 public:
-	auto texture_from_surface(const Surface& sur) const {
+	Renderer(const Renderer&) = delete;
+	Renderer(Renderer&&) = delete;
+	Renderer& operator=(const Renderer&) = delete;
+	Renderer& operator=(Renderer&&) = delete;
+	auto texture(const Surface& sur) const {
 		auto tex = SDL_CreateTextureFromSurface(ren, sur.get());
 		if (!tex) throw ERR("Failed to create texture from surface.");
 		return Texture(tex);
 	}
-	auto texture_from_bmp(std::filesystem::path path) const {
-		return texture_from_surface(Surface::load_bmp(path));
+	auto texture(std::filesystem::path path_to_bmp) const {
+		return texture(Surface::load_bmp(path_to_bmp));
 	}
 	void set_draw_color(Color color) const {
 		auto c = color.to_sdl_color();
@@ -272,16 +289,16 @@ public:
 		if (SDL_SetRenderDrawBlendMode(ren, bm))
 			throw ERR("Failed to set render draw blend mode.");
 	}
-	void set_texture_blend_mode(Texture& tex, BlendMode blendmode) const {
+	void set_texture_blend_mode(const Texture& tex, BlendMode blendmode) const {
 		auto bm = static_cast<SDL_BlendMode>(blendmode);
 		if (SDL_SetTextureBlendMode(tex.get(), bm))
 			throw ERR("Failed to set texture blend mode.");
 	}
-	void set_texture_alpha_mod(Texture& tex, std::uint8_t alpha) const {
+	void set_texture_alpha_mod(const Texture& tex, std::uint8_t alpha) const {
 		if (SDL_SetTextureAlphaMod(tex.get(), alpha))
 			throw ERR("Failed to set texture alpha mode.");
 	}
-	void set_texture_color_mod(Texture& tex, Color color) const {
+	void set_texture_color_mod(const Texture& tex, Color color) const {
 		if (SDL_SetTextureColorMod(tex.get(), color.r, color.g, color.b))
 			throw ERR("Failed to set texture color mode.");
 	}
@@ -326,6 +343,10 @@ private:
 	Window(const std::shared_ptr<const sdl2::Sdl> sdl, SDL_Window* win) :
 		sdl(sdl), win(win) {}
 public:
+	Window(const Window&) = delete;
+	Window(Window&&) = delete;
+	Window& operator=(const Window&) = delete;
+	Window& operator=(Window&&) = delete;
 	auto renderer(renderer::Flags flags) const {
 		SDL_RendererFlags f = static_cast<SDL_RendererFlags>(flags);
 		auto ren = SDL_CreateRenderer(win, -1, f);
@@ -345,6 +366,10 @@ private:
 			throw ERR("Failed to initialize SDL.");
 	}
 public:
+	Sdl(const Sdl&) = delete;
+	Sdl(Sdl&&) = delete;
+	Sdl& operator=(const Sdl&) = delete;
+	Sdl& operator=(Sdl&&) = delete;
 	static auto init() {
 		return std::shared_ptr<Sdl>(new Sdl);
 	}

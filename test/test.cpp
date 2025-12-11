@@ -8,7 +8,7 @@ int main(void) {
 		auto win = sdl->window("test", 800, 600, window::Flags::SHOWN);
 		auto ren = win->renderer(renderer::Flags::PRESENTVSYNC);
 		auto ep = sdl->event();
-		auto tex = ren.texture_from_bmp("../test/face.bmp");
+		auto tex = ren.texture("../test/face.bmp");
 		auto timer = sdl->timer();
 		while (ep.poll()) {}
 		ren.clear({30, 70, 70, 255});
