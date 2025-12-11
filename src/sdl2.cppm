@@ -248,7 +248,7 @@ public:
 		if (!tex) throw ERR("Failed to create texture from surface.");
 		return Texture(tex);
 	}
-	auto texture_from_bmp(std::filesystem::path path) {
+	auto texture_from_bmp(std::filesystem::path path) const {
 		return texture_from_surface(Surface::load_bmp(path));
 	}
 	void set_draw_color(Color color) const {
