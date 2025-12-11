@@ -38,4 +38,4 @@ int main(void) {
 }
 ```
 ## Todo
-[ ] - Add more tests
+- [ ] Add more tests
