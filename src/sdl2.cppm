@@ -5,6 +5,8 @@ module;
 export module sdl2;
 import std;
 export import :types;
+export import :window;
+export import :renderer;
 
 using std::enable_shared_from_this;
 using std::shared_ptr;
@@ -34,6 +36,11 @@ export class Sdl : public enable_shared_from_this<Sdl> {
 		Sdl& operator=(const Sdl&) = delete;
 		Sdl& operator=(Sdl&&) = delete;
 		~Sdl();
+		shared_ptr<Window> window(
+			const string& title,
+			Dimensions dimensions,
+			Window::Flags flags
+		) const;
 };
 
 }
