@@ -21,6 +21,8 @@ int main(void) {
 		auto win = sdl->window("test", {800, 600}, Window::Flags::SHOWN);
 		auto ren = win->renderer(Renderer::Flags::PRESENTVSYNC);
 		Surface sur("../face.bmp");
+		auto tex = ren.texture(sur);
+		auto tex2 = ren.texture("../face.bmp");
 	} catch (const runtime_error& e) {
 		println(cerr, "{}", e.what());
 	}

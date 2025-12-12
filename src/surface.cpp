@@ -12,17 +12,13 @@ Surface::Surface(const path& path_to_bmp) {
 	dbg("Surface creatd from bmp.");
 }
 
-const SDL_Surface* Surface::get() const {
-	return sur;
-}
-
-
 Surface::Surface(Surface&& other) noexcept : sur(other.sur) {
 	other.sur = nullptr;
 }
 
 Surface& Surface::operator=(Surface&& other) noexcept {
 	if (this != &other) {
+		if (this->sur) SDL_FreeSurface(this->sur);
 		this->sur = other.sur;
 		other.sur = nullptr;
 	}

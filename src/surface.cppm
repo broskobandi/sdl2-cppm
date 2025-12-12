@@ -13,7 +13,6 @@ export class Surface {
 	private:
 		SDL_Surface* sur;
 		friend class Renderer;
-		const SDL_Surface* get() const;
 	public:
 		Surface(const path& path_to_bmp);
 		Surface(Surface&&) noexcept;

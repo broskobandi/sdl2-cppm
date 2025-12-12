@@ -37,4 +37,16 @@ Renderer& Renderer::operator=(Renderer&& other) noexcept {
 	return *this;
 }
 
+Texture Renderer::texture(const Surface& sur) {
+	if (!sur.sur) throw err("nullptr passed to Renderer::texture()");
+	auto tex = SDL_CreateTextureFromSurface(ren, sur.sur);
+	if (!tex) throw err("Failed to create texture from surface.");
+	return Texture(tex);
+}
+
+Texture Renderer::texture(const path& path_to_bmp) {
+	Surface sur(path_to_bmp);
+	return texture(sur);
+}
+
 }

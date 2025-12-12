@@ -5,9 +5,12 @@ module;
 export module sdl2:renderer;
 import std;
 import :types;
+import :surface;
+import :texture;
 
 using std::shared_ptr;
 using std::uint32_t;
+using std::filesystem::path;
 
 namespace sdl2 {
 
@@ -32,6 +35,8 @@ export class Renderer {
 		Renderer(Renderer&&) noexcept;
 		Renderer& operator=(Renderer&&) noexcept;
 		~Renderer();
+		Texture texture(const Surface& sur);
+		Texture texture(const path& path_to_bmp);
 };
 
 }
