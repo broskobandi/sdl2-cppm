@@ -10,6 +10,7 @@ using sdl2::Renderer;
 using sdl2::Surface;
 using sdl2::KeyCode;
 using sdl2::ScanCode;
+using sdl2::Event;
 using std::uint32_t;
 using std::int32_t;
 
@@ -33,6 +34,7 @@ int main(void) {
 		}
 		println("Events polled.");
 		[[maybe_unused]] bool a =  event.has_scancode(ScanCode::A);
+		[[maybe_unused]] Event::Type type = event.type();
 		ren.set_blend_mode(Renderer::BlendMode::BLEND);
 		ren.set_blend_mode(tex, Renderer::BlendMode::ADD);
 		ren.set_color_mode(tex, {255, 0, 0, 0});

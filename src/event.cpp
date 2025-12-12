@@ -24,6 +24,10 @@ int32_t Event::poll() {
 	return SDL_PollEvent(&event);
 }
 
+Event::Type Event::type() const {
+	return static_cast<Type>(event.type);
+}
+
 KeyCode Event::keycode() const {
 	return static_cast<KeyCode>(event.key.keysym.sym);
 }
