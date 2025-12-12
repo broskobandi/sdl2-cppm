@@ -7,6 +7,7 @@ import std;
 export import :types;
 export import :window;
 export import :renderer;
+export import :surface;
 
 using std::enable_shared_from_this;
 using std::shared_ptr;

@@ -7,6 +7,7 @@ using std::cerr;
 using sdl2::Sdl;
 using sdl2::Window;
 using sdl2::Renderer;
+using sdl2::Surface;
 using std::uint32_t;
 
 int main(void) {
@@ -19,6 +20,7 @@ int main(void) {
 			catch(const runtime_error& e) { println("SDL init guard works."); };
 		auto win = sdl->window("test", {800, 600}, Window::Flags::SHOWN);
 		auto ren = win->renderer(Renderer::Flags::PRESENTVSYNC);
+		Surface sur("../face.bmp");
 	} catch (const runtime_error& e) {
 		println(cerr, "{}", e.what());
 	}
