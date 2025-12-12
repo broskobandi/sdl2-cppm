@@ -36,4 +36,8 @@ shared_ptr<Window> Sdl::window(
 	return shared_ptr<Window>(new Window(win, shared_from_this()));
 }
 
+Event Sdl::event() const {
+	return Event(shared_from_this());
+}
+
 }

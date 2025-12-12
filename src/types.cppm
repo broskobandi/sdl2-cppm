@@ -10,13 +10,14 @@ namespace sdl2 {
 
 export using std::int32_t;
 export using std::uint32_t;
+export using std::uint8_t;
 using std::underlying_type_t;
 
 export struct Point {
 	int32_t x, y;
 	private:
 		friend class Renderer;
-		auto get_sdl() const;
+		SDL_Point to_sdl() const;
 };
 
 export struct Dimensions {
@@ -28,7 +29,14 @@ export struct Rect {
 	uint32_t w, h;
 	private:
 		friend class Renderer;
-		auto get_sdl() const;
+		SDL_Rect to_sdl() const;
+};
+
+export struct Color {
+	uint8_t r, g, b, a;
+	private:
+		friend class Renderer;
+		SDL_Color to_sdl() const;
 };
 
 export template<typename T>

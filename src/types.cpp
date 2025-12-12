@@ -7,19 +7,28 @@ import :types;
 
 namespace sdl2 {
 
-auto Point::get_sdl() const {
+SDL_Point Point::to_sdl() const {
 	return SDL_Point {
 		static_cast<int>(x),
 		static_cast<int>(y),
 	};
 }
 
-auto Rect::get_sdl() const {
+SDL_Rect Rect::to_sdl() const {
 	return SDL_Rect {
 		static_cast<int>(x),
 		static_cast<int>(y),
 		static_cast<int>(w),
 		static_cast<int>(h),
+	};
+}
+
+SDL_Color Color::to_sdl() const {
+	return SDL_Color {
+		static_cast<Uint8>(r),
+		static_cast<Uint8>(g),
+		static_cast<Uint8>(b),
+		static_cast<Uint8>(a),
 	};
 }
 
