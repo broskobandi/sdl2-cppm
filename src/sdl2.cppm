@@ -24,7 +24,7 @@ SOFTWARE.
 
 /** @file sdl2.cppm 
  * @brief Public module interface file for the sdl2-cppm library.
- * @defaults This file contains the main Sdl class that other objects in the library 
+ * @details This file contains the main Sdl class that other objects in the library 
  * depend on. */
 
 module;
@@ -41,6 +41,7 @@ export import :texture;
 export import :event;
 export import :scancode;
 export import :keycode;
+export import :timer;
 
 using std::enable_shared_from_this;
 using std::shared_ptr;
@@ -102,6 +103,10 @@ export class Sdl : public enable_shared_from_this<Sdl> {
 		/** Constructs an Event object.
 		 * @return A stack allocated instance of an Event object. */
 		Event event() const;
+
+		/** Construct a Timer object.
+		 * @return A stack allocated instance of a Timer object.*/
+		Timer timer() const;
 };
 
 }

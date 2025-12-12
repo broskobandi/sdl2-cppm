@@ -23,6 +23,7 @@ int main(void) {
 			catch(const runtime_error& e) { println("SDL init guard works."); };
 		auto win = sdl->window("test", {800, 600}, Window::Flags::SHOWN);
 		auto ren = win->renderer(Renderer::Flags::PRESENTVSYNC);
+		auto timer = sdl->timer();
 		Surface sur("../face.bmp");
 		auto tex = ren.texture(sur);
 		auto tex2 = ren.texture("../face.bmp");
@@ -41,6 +42,7 @@ int main(void) {
 		ren.fill_rect({0, 0, 100, 100});
 		ren.copy(tex);
 		ren.present();
+		[[maybe_unused]] auto time = timer.ticks();
 	} catch (const runtime_error& e) {
 		println(cerr, "{}", e.what());
 	}
