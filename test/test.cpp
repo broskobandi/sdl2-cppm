@@ -11,6 +11,7 @@ using sdl2::Surface;
 using sdl2::KeyCode;
 using sdl2::ScanCode;
 using sdl2::Event;
+using sdl2::Rect;
 using std::uint32_t;
 using std::int32_t;
 
@@ -41,7 +42,7 @@ int main(void) {
 		ren.set_draw_color({30, 70, 70, 255});
 		ren.clear();
 		ren.set_draw_color({70, 30, 30, 255});
-		ren.fill_rect({0, 0, 100, 100});
+		ren.fill_rect(Rect{0, 0, 100, 100});
 		ren.copy(tex);
 		ren.present();
 		[[maybe_unused]] auto time = timer.ticks();
