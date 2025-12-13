@@ -46,7 +46,8 @@ namespace sdl2 {
 export class Window;
 
 /** This class is responsible for creating, managing, and rendering textures,
- * and all other rendering tasks. It's constructed with Window::renderer(). */
+ * and all other rendering tasks. It's constructed with Window::renderer().
+ * This class is move only. */
 export class Renderer {
 	public:
 		enum class Flags : uint32_t {
