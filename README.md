@@ -11,5 +11,5 @@ for now.
 ## Why C++23?
 std::println...
 ## Todo
-- [ ] Add more comments
+- [x] Add more comments
 - [ ] Add example usage in readme
