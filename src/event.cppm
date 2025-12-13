@@ -116,13 +116,29 @@ export class Event {
 		friend class Sdl;
 		SDL_Event event;
 		shared_ptr<const Sdl> sdl;
-		Event(shared_ptr<const Sdl> sdl);
 		const uint8_t* keystate {nullptr};
+
+		/** Private constructor. Sdl::event() calls this. */
+		Event(shared_ptr<const Sdl> sdl);
+
 	public:
+
 		~Event();
 		int32_t poll();
+
+		/** Returns the most up-to-date event type.
+		 * Requires poll() to be called first.
+		 * @return Type containing the value of event.type. */
 		Type type() const;
+
+		/** Return the most up-to-date key event code.
+		 * Requires poll() to be called first.
+		 * @return KeyCode containing the value of event.key.keysym.sym. */
 		KeyCode keycode() const;
+
+		/** Checks whether the given key was pressed.
+		 * Requires poll() to be called first.
+		 * @return bool indicating whether the key was pressed. */
 		bool has_scancode(ScanCode scancode) const;
 };
 

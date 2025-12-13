@@ -1,41 +1,15 @@
 # sdl2-cppm
 Abstractions for objects and functionalities of SDL2 written using C++23 modules.
-## Usage
-```cpp
-import sdl2;
-import std;
-
-int main(void) {
-	try {
-
-		using namespace sdl2;
-
-		auto sdl = Sdl::init();
-		auto win = sdl->window("test", 800, 600, window::Flags::SHOWN);
-		auto ren = win->renderer(renderer::Flags::PRESENTVSYNC);
-		auto event = sdl->event();
-		auto tex = ren.texture_from_bmp("../test/face.bmp");
-
-        bool is_running = true;
-
-        while (is_running) {
-            while (event.poll()) {
-                if (event.has_keycode(event::KeyCode::q) is_running = false;
-
-                ren.clear({30, 70, 70, 255});
-
-                ren.copy(tex);
-
-                ren.present();
-            }
-        }
-
-	} catch (const std::runtime_error& e) {
-		std::println(std::cerr, "{}", e.what());
-	}
-
-	return 0;
-}
-```
+## The goal
+The goal of the project is to learn about the new c++ modules as well as to provide
+a higher level library for SDL2 that integrates better with modular C++ projects.
+## Why SDL2?
+I chose SDL2 because I have been using it for many years in small games that I wrote in C,
+so I am much more familiar with it than SDL3. I'm sure SDL3 is also stable enough 
+for such a project to make sense but I'm going to leave that for another developer 
+for now.
+## Why C++23?
+std::println...
 ## Todo
-- [ ] Add more tests
+- [ ] Add more comments
+- [ ] Add example usage in readme
