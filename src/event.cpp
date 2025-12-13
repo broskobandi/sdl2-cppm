@@ -47,18 +47,29 @@ Event::~Event() {
 	dbg("Event destroyed.");
 }
 
+/** Calls SDL_PollEvent.
+ * @return 1 if there is a pending event, otherwise 0. */
 int32_t Event::poll() {
 	return SDL_PollEvent(&event);
 }
 
+/** Returns the most up-to-date event type.
+ * Requires poll() to be called first.
+ * @return Type containing the value of event.type. */
 Event::Type Event::type() const {
 	return static_cast<Type>(event.type);
 }
 
+/** Return the most up-to-date key event code.
+ * Requires poll() to be called first.
+ * @return KeyCode containing the value of event.key.keysym.sym. */
 KeyCode Event::keycode() const {
 	return static_cast<KeyCode>(event.key.keysym.sym);
 }
 
+/** Checks whether the given key was pressed.
+ * Requires poll() to be called first.
+ * @return bool indicating whether the key was pressed. */
 bool Event::has_scancode(ScanCode scancode) const {
 	if (keystate[+scancode]) return true;
 	return false;

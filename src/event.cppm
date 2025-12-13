@@ -124,6 +124,9 @@ export class Event {
 	public:
 
 		~Event();
+
+		/** Calls SDL_PollEvent.
+		 * @return 1 if there is a pending event, otherwise 0. */
 		int32_t poll();
 
 		/** Returns the most up-to-date event type.
