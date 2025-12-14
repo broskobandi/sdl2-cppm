@@ -33,6 +33,8 @@ module sdl2;
 import :debug;
 
 using std::println;
+using std::string;
+using std::runtime_error;
 
 namespace sdl2 {
 

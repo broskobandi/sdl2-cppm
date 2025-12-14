@@ -32,6 +32,9 @@ module sdl2;
 import :timer;
 import :debug;
 
+using std::shared_ptr;
+using std::uint32_t;
+
 namespace sdl2 {
 
 /** Private constructor. Sdl::timer() calls this. */

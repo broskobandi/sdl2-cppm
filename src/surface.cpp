@@ -30,6 +30,8 @@ module sdl2;
 import :surface;
 import :debug;
 
+using std::filesystem::path;
+
 namespace sdl2 {
 
 Surface::Surface(const path& path_to_bmp) {

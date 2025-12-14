@@ -32,6 +32,9 @@ module;
 module sdl2;
 import :debug;
 
+using std::enable_shared_from_this;
+using std::shared_ptr;
+
 namespace sdl2 {
 
 /** Private constructor. init() calls this. */

@@ -32,6 +32,12 @@ module sdl2;
 import :renderer;
 import :debug;
 
+using std::shared_ptr;
+using std::uint32_t;
+using std::optional;
+using std::nullopt;
+using std::filesystem::path;
+
 namespace sdl2 {
 
 /** Private constructor, Window::renderer() calls this. */

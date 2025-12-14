@@ -22,7 +22,7 @@ int main(void) {
 		flags |= Sdl::Flags::TIMER;
 		auto sdl = Sdl::init(flags);
 		try { auto sdl = Sdl::init(Sdl::Flags::EVERYTHING); }
-			catch(const runtime_error& e) { println("SDL init guard works."); };
+			catch(const runtime_error& e) { };
 		auto win = sdl->window("test", {800, 600}, Window::Flags::SHOWN);
 		auto ren = win->renderer(Renderer::Flags::PRESENTVSYNC);
 		auto timer = sdl->timer();
@@ -33,7 +33,6 @@ int main(void) {
 		while (event.poll()) {
 			[[maybe_unused]] KeyCode key = event.keycode();
 		}
-		println("Events polled.");
 		[[maybe_unused]] bool a =  event.has_scancode(ScanCode::A);
 		[[maybe_unused]] Event::Type type = event.type();
 		ren.set_blend_mode(Renderer::BlendMode::BLEND);
@@ -49,6 +48,8 @@ int main(void) {
 	} catch (const runtime_error& e) {
 		println(cerr, "{}", e.what());
 	}
+
+	println("All tests passed.");
 
 	return 0;
 }

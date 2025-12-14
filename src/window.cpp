@@ -34,6 +34,10 @@ module sdl2;
 import :window;
 import :debug;
 
+using std::uint32_t;
+using std::string;
+using std::shared_ptr;
+
 namespace sdl2 {
 
 /** Private constructor. Window::renderer() calls this. */

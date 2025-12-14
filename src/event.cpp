@@ -34,6 +34,9 @@ module sdl2;
 import :event;
 import :debug;
 
+using std::shared_ptr;
+using std::int32_t;
+
 namespace sdl2 {
 
 Event::Event(shared_ptr<const Sdl> sdl) :
