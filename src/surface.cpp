@@ -35,7 +35,8 @@ using std::filesystem::path;
 namespace sdl2 {
 
 Surface::Surface(const path& path_to_bmp) {
-	sur = SDL_LoadBMP(path_to_bmp.c_str());
+	auto path_str = path_to_bmp.string();
+	sur = SDL_LoadBMP(path_str.c_str());
 	if (!sur) throw err("Failed to create surface from bmp.");
 	dbg("Surface creatd from bmp.");
 }
