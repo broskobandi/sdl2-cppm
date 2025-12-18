@@ -49,7 +49,7 @@ int main(void) {
 		println(cerr, "{}", e.what());
 	}
 
-	println("All tests passed.");
+	println("[ALL TESTS PASSED]\n");
 
 	return 0;
 }
