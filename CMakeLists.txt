@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.30)
 if (UNIX AND NOT APPLE)
 	message("Building on Linux.")
 
+	message("Compiler being used: ${CMAKE_CXX_COMPILER}")
 	if (NOT CMAKE_CXX_COMPILER STREQUAL clang++)
 		message(FATAL_ERROR
 			"Must use clang as the project uses modules, libc++, and 'import std;'")
