@@ -70,22 +70,54 @@ if (UNIX AND NOT APPLE)
 endif()
 
 if (WIN32)
-	message(FATAL_ERROR "Windows build script is not ready.")
-	#
-	# cmake_minimum_required(VERSION 3.30)
-	#
-	# set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-	# set(CMAKE_CXX_STANDARD 23)
-	# set(CMAKE_CXX_EXTENSIONS OFF)
-	# set(CMAKE_CXX_STANDARD_REQUIRED ON)
-	# project()
+	message("Building on Windows.")
 
-
+	set(CMAKE_CXX_STANDARD 23)
+	set(CMAKE_CXX_EXTENSIONS OFF)
+	set(CMAKE_CXX_STANDARD_REQUIRED ON)
+	file(GLOB MOD ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cppm)
+	file(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 	project(sdl2-cppm)
 	
-endif()
+	add_executable(test test/test.cpp ${SRC})
+	target_link_directories(test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/WIN/lib/x64)
+	target_link_libraries(test PRIVATE SDL2 SDL2main)
+	add_custom_target(run_test COMMAND $<TARGET_FILE:test>)
+	
+	add_custom_command(TARGET test PRE_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+		${CMAKE_CURRENT_SOURCE_DIR}/WIN/lib/x64/SDL2.dll
+		${CMAKE_CURRENT_BINARY_DIR}/SDL2.dll
+	)
 
-project(sdl2-cppm)
+	add_library(${PROJECT_NAME} SHARED ${SRC})
+	add_library(${PROJECT_NAME}-static STATIC ${SRC})
+	add_executable(example EXCLUDE_FROM_ALL example/example.cpp ${SRC})
+	set_target_properties(${PROJECT_NAME}-static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+	target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/WIN/lib/x64)
+	target_link_directories(${PROJECT_NAME}-static PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/WIN/lib/x64)
+	target_link_directories(example PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/WIN/lib/x64)
+	target_link_libraries(${PROJECT_NAME} PRIVATE SDL2 SDL2main)
+	target_link_libraries(${PROJECT_NAME}-static PRIVATE SDL2 SDL2main)
+	target_link_libraries(example PRIVATE SDL2 SDL2main)
+	add_dependencies(${PROJECT_NAME} run_test)
+	add_dependencies(${PROJECT_NAME}-static run_test)
+	add_dependencies(example run_test)
+	target_sources(test PRIVATE FILE_SET modules TYPE CXX_MODULES FILES ${MOD})
+	target_sources(${PROJECT_NAME} PRIVATE FILE_SET modules TYPE CXX_MODULES FILES ${MOD})
+	target_sources(${PROJECT_NAME}-static PRIVATE FILE_SET modules TYPE CXX_MODULES FILES ${MOD})
+	target_sources(example PRIVATE FILE_SET modules TYPE CXX_MODULES FILES ${MOD})
+	target_include_directories(test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/WIN/include)
+	target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/WIN/include)
+	target_include_directories(${PROJECT_NAME}-static PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/WIN/include)
+	target_include_directories(example PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/WIN/include)
+
+	if (CMAKE_BUILD_TYPE STREQUAL "Release")
+		target_compile_options(${PROJECT_NAME} PRIVATE NDEBUG)
+		target_compile_options(${PROJECT_NAME}-static PRIVATE NDEBUG)
+	endif()
+	
+endif()
 
 # cmake_minimum_required(VERSION 3.30)
 #
