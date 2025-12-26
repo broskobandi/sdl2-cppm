@@ -46,7 +46,7 @@ if(UNIX AND NOT APPLE)
 	project(sdl2-cppm)
 
 	# Make sure SDL2 is available
-	find_package(SDL2 2.32.8 REQUIRED)
+	find_package(SDL2 2.32.8 QUIET)
 	if(NOT SDL2_FOUND)
 		message("[STATUS] Downloading SDL2...")
 		include(FetchContent)
