@@ -3,8 +3,6 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-link_libraries(SDL2)
 file(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
 if(UNIX AND NOT APPLE)
@@ -74,7 +72,6 @@ if(UNIX AND NOT APPLE)
 	# Set test target
 	add_executable(${PROJECT_NAME}-test test/test.cpp ${SRC})
 	set(TARGETS ${TARGETS} ${PROJECT_NAME}-test)
-
 	# Add testing command
 	add_custom_target(
 		${PROJECT_NAME}-run_test
@@ -99,8 +96,10 @@ if(UNIX AND NOT APPLE)
 		${PROJECT_NAME}-static PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
 	)
 
-	# Set target sources
+	# Set shared target settings
 	foreach(T IN LISTS TARGETS)
+		target_link_libraries(${T} PRIVATE SDL2)
+		target_include_directories(${T} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 		target_sources(
 			${T} PRIVATE
 			FILE_SET modules TYPE CXX_MODULES
