@@ -64,11 +64,12 @@ if(UNIX AND NOT APPLE)
 			GIT_TAG release-2.32.x
 		)
 		FetchContent_MakeAvailable(SDL2) 
-		set(INC_DIR /usr/include/SDL2)
+		set(INC_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/sdl2-src/include)
 	else()
 		message("[STATUS] SDL2 found.")
-		set(INC_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/sdl2-src/include)
+		set(INC_DIR /usr/include/SDL2)
 	endif()
+	message("[STATUS] Include dir: ${INC_DIR}")
 	
 	# Add std.cppm to the MOD variable
 	file(GLOB MOD ${MOD} ${STD})
