@@ -4,11 +4,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 file(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+file(GLOB MOD ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cppm)
 
 if(UNIX AND NOT APPLE)
 
 	message("[STATUS] Building on Linux")
 
+	# Set stdlib to libc++ 
 	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -stdlib=libc++)
 
 	# Check if clang++ is being used.
@@ -66,8 +68,8 @@ if(UNIX AND NOT APPLE)
 		message("[STATUS] SDL2 found.")
 	endif()
 	
-	# Set MOD variable that includes std.cppm
-	file(GLOB MOD src/*.cppm ${STD})
+	# Add std.cppm to the MOD variable
+	file(GLOB MOD ${MOD} ${STD})
 
 	# Set test target
 	add_executable(${PROJECT_NAME}-test test/test.cpp ${SRC})
@@ -112,6 +114,9 @@ endif()
 
 if(WIN32)
 
+	message("Building on Window.")
+
+	# Set project name
 	project(sdl2-cppm)
 
 endif()
