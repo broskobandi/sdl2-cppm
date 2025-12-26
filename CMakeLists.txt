@@ -4,10 +4,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+link_libraries(SDL2)
+file(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
 if(UNIX AND NOT APPLE)
 
 	message("[STATUS] Building on Linux")
+
+	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -stdlib=libc++)
 
 	# Check if clang++ is being used.
 	if(NOT CMAKE_CXX_COMPILER)
@@ -42,7 +46,10 @@ if(UNIX AND NOT APPLE)
 	else()
 		message("[ERROR] std.cppm not found.")
 	endif()
+	# Set STD_DIR for later use
+	get_filename_component(STD_DIR ${STD_CPPM} DIRECTORY)
 
+	# Set project name
 	project(sdl2-cppm)
 
 	# Make sure SDL2 is available
@@ -56,11 +63,51 @@ if(UNIX AND NOT APPLE)
 			GIT_SHALLOW TRUE
 			GIT_TAG release-2.32.x
 		)
-		FetchContent_MakeAvailable(SDL2)
+		FetchContent_MakeAvailable(SDL2) 
 	else()
 		message("[STATUS] SDL2 found.")
 	endif()
 	
+	# Set MOD variable that includes std.cppm
+	file(GLOB MOD src/*.cppm ${STD})
+
+	# Set test target
+	add_executable(${PROJECT_NAME}-test test/test.cpp ${SRC})
+	set(TARGETS ${TARGETS} ${PROJECT_NAME}-test)
+
+	# Add testing command
+	add_custom_target(
+		${PROJECT_NAME}-run_test
+		COMMAND $<TARGET_FILE:${PROJECT_NAME}-test>)
+
+	# Set example target
+	add_executable(
+		${PROJECT_NAME}-example EXCLUDE_FROM_ALL example/example.cpp ${SRC}
+	)
+	set(TARGETS ${TARGETS} ${PROJECT_NAME}-example)
+	add_dependencies(${PROJECT_NAME}-example ${PROJECT_NAME}-run_test)
+
+	# Set shared library target
+	add_library(${PROJECT_NAME} SHARED ${SRC})
+	set(TARGETS ${TARGETS} ${PROJECT_NAME})
+	add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}-run_test)
+
+	# Set static library target
+	add_library(${PROJECT_NAME}-static STATIC ${SRC})
+	set(TARGETS ${TARGETS} ${PROJECT_NAME}-static)
+	set_target_properties(
+		${PROJECT_NAME}-static PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
+	)
+
+	# Set target sources
+	foreach(T IN LISTS TARGETS)
+		target_sources(
+			${T} PRIVATE
+			FILE_SET modules TYPE CXX_MODULES
+			BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${STD_DIR}
+			FILES ${MOD}
+		)
+	endforeach()
 
 endif()
 
