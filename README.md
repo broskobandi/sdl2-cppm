@@ -13,3 +13,4 @@ std::println...
 ## Todo
 - [x] Add more comments
 - [ ] Add example usage in readme
+- [ ] Add install() in CMakeLists.txt
