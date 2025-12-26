@@ -14,6 +14,18 @@ if (UNIX AND NOT APPLE)
 			"Must use ninja as the project is built using c++20 modules.")
 	endif()
 
+	# find_package(SDL2 2.32.8 QUIET)
+	# if (NOT SDL2_FOUND)
+	include(FetchContent)
+	FetchContent_Declare(
+		SDL2_GIT
+		GIT_REPOSITORY https://github.com/libsdl-org/SDL
+		GIT_SHALLOW TRUE
+		GIT_TAG release-2.32.x
+	)
+	FetchContent_MakeAvailable(SDL2_GIT)
+	# endif()
+
 	set(CMAKE_CXX_STANDARD 23)
 	set(CMAKE_CXX_STANDARD_REQUIRED ON)
 	set(CMAKE_CXX_EXTENSIONS OFF)
@@ -29,20 +41,22 @@ if (UNIX AND NOT APPLE)
 	project(sdl2-cppm)
 
 	add_executable(sdl2-cppm-test test/test.cpp ${SRC})
-	target_link_libraries(sdl2-cppm-test PRIVATE SDL2)
+	# target_link_libraries(sdl2-cppm-test PRIVATE SDL2)
+	target_include_directories(sdl2-cppm-test 
+	target_link_libraries(sdl2-cppm-test PRIVATE SDL2_GIT)
 	target_sources(sdl2-cppm-test PRIVATE FILE_SET modules TYPE CXX_MODULES FILES ${MOD})
 	add_custom_target(sdl2-cppm-run_test COMMAND $<TARGET_FILE:sdl2-cppm-test>)
 
 	add_library(${PROJECT_NAME} SHARED ${SRC})
 	add_library(${PROJECT_NAME}-static STATIC ${SRC})
-	target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
-	target_link_libraries(${PROJECT_NAME}-static PRIVATE SDL2)
+	target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_GIT)
+	target_link_libraries(${PROJECT_NAME}-static PRIVATE SDL2_GIT)
 	add_dependencies(${PROJECT_NAME} sdl2-cppm-run_test)
 	set_target_properties(
 		${PROJECT_NAME}-static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
 	add_executable(sdl2-cppm-example EXCLUDE_FROM_ALL example/example.cpp ${SRC})
-	target_link_libraries(sdl2-cppm-example PRIVATE SDL2)
+	target_link_libraries(sdl2-cppm-example PRIVATE SDL2_GIT)
 	target_sources(sdl2-cppm-example PRIVATE FILE_SET modules TYPE CXX_MODULES FILES ${MOD})
 	add_dependencies(sdl2-cppm-example sdl2-cppm-run_test)
 
