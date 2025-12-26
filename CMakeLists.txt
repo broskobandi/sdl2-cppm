@@ -64,8 +64,10 @@ if(UNIX AND NOT APPLE)
 			GIT_TAG release-2.32.x
 		)
 		FetchContent_MakeAvailable(SDL2) 
+		set(INC_DIR /usr/include/SDL2)
 	else()
 		message("[STATUS] SDL2 found.")
+		set(INC_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/sdl2-src/include)
 	endif()
 	
 	# Add std.cppm to the MOD variable
@@ -101,7 +103,8 @@ if(UNIX AND NOT APPLE)
 	# Set shared target settings
 	foreach(T IN LISTS TARGETS)
 		target_link_libraries(${T} PRIVATE SDL2)
-		target_include_directories(${T} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+		# target_include_directories(${T} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+		target_include_directories(${T} PRIVATE ${INC_DIR})
 		target_sources(
 			${T} PRIVATE
 			FILE_SET modules TYPE CXX_MODULES
