@@ -92,9 +92,9 @@ add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}-run_test)
 # Set static library target
 add_library(${PROJECT_NAME}-static STATIC ${SRC})
 set(TARGETS ${TARGETS} ${PROJECT_NAME}-static)
-# set_target_properties(
-# 	${PROJECT_NAME}-static PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
-# )
+set_target_properties(
+	${PROJECT_NAME}-static PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
+)
 
 # Copy face.bpm to build dir - this is necessary if SDL git is used.
 add_custom_command(TARGET ${PROJECT_NAME}-test POST_BUILD
