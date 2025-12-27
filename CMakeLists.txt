@@ -11,7 +11,7 @@ if(UNIX AND NOT APPLE)
 	message("[STATUS] Building on Linux")
 
 	# Set stdlib to libc++ 
-	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -stdlib=libc++)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 
 	# Check if clang++ is being used.
 	if(NOT CMAKE_CXX_COMPILER)
