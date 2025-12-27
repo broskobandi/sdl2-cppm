@@ -17,7 +17,6 @@ if(UNIX AND NOT APPLE)
 		)
 	endif()
 	get_filename_component(COMPILER_NAME ${CMAKE_CXX_COMPILER} NAME)
-	message("[STATUS] Compiler: ${COMPILER_NAME}")
 	if(NOT COMPILER_NAME STREQUAL clang++)
 		message(FATAL_ERROR
 			"[ERROR] Must use clang++ because the project uses c++23 modules"
@@ -38,9 +37,7 @@ if(UNIX AND NOT APPLE)
 		)
 	endif()
 	file(GLOB STD ${STD_CPPM})
-	if (STD)
-		message("[STATUS] std.cppm found.")
-	else()
+	if (NOT STD)
 		message("[ERROR] std.cppm not found.")
 	endif()
 
@@ -56,7 +53,6 @@ project(sdl2-cppm LANGUAGES CXX C)
 # Make sure SDL2 is available
 find_package(SDL2 2.32.8 QUIET)
 if(NOT SDL2_FOUND)
-	message("[STATUS] Downloading SDL2...")
 	include(FetchContent)
 	FetchContent_Declare(
 		SDL2
@@ -65,29 +61,27 @@ if(NOT SDL2_FOUND)
 		GIT_TAG release-2.32.x
 	)
 	FetchContent_MakeAvailable(SDL2) 
-else()
-	message("[STATUS] SDL2 found.")
 endif()
 
 # Set test target
 add_executable(${PROJECT_NAME}-test test/test.cpp ${SRC})
 set(TARGETS ${TARGETS} ${PROJECT_NAME}-test)
-# Add testing command
-add_custom_target(
-	${PROJECT_NAME}-run_test
-	COMMAND $<TARGET_FILE:${PROJECT_NAME}-test>)
+# # Add testing command
+# add_custom_target(
+# 	${PROJECT_NAME}-run_test
+# 	COMMAND $<TARGET_FILE:${PROJECT_NAME}-test>)
 
 # Set example target
 add_executable(
 	${PROJECT_NAME}-example EXCLUDE_FROM_ALL example/example.cpp ${SRC}
 )
 set(TARGETS ${TARGETS} ${PROJECT_NAME}-example)
-add_dependencies(${PROJECT_NAME}-example ${PROJECT_NAME}-run_test)
+# add_dependencies(${PROJECT_NAME}-example ${PROJECT_NAME}-run_test)
 
 # Set shared library target
 add_library(${PROJECT_NAME} SHARED ${SRC})
 set(TARGETS ${TARGETS} ${PROJECT_NAME})
-add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}-run_test)
+# add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}-run_test)
 
 # Set static library target
 add_library(${PROJECT_NAME}-static STATIC ${SRC})
