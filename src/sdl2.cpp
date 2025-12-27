@@ -69,7 +69,10 @@ shared_ptr<Window> Sdl::window(
 	Dimensions dimensions,
 	Window::Flags flags
 ) const {
-	auto win = SDL_CreateWindow(title.c_str(), 0, 0,
+	auto win = SDL_CreateWindow(
+		title.c_str(),
+		SDL_WINDOWPOS_CENTERED,
+		SDL_WINDOWPOS_CENTERED,
 		static_cast<int>(dimensions.w),
 		static_cast<int>(dimensions.h),
 		static_cast<Uint32>(flags));
