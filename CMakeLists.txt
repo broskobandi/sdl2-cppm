@@ -7,9 +7,6 @@ file(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 file(GLOB MOD ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cppm)
 
 if(UNIX AND NOT APPLE)
-
-	message("[STATUS] Building on Linux")
-
 	# Set stdlib to libc++ 
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 
@@ -46,82 +43,20 @@ if(UNIX AND NOT APPLE)
 	else()
 		message("[ERROR] std.cppm not found.")
 	endif()
-	# Set STD_DIR for later use
-	get_filename_component(STD_DIR ${STD_CPPM} DIRECTORY)
 
-	# Set project name
-	project(sdl2-cppm)
-
-	# Make sure SDL2 is available
-	find_package(SDL2 2.32.8 QUIET)
-	if(NOT SDL2_FOUND)
-		message("[STATUS] Downloading SDL2...")
-		include(FetchContent)
-		FetchContent_Declare(
-			SDL2
-			GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-			GIT_SHALLOW TRUE
-			GIT_TAG release-2.32.x
-		)
-		FetchContent_MakeAvailable(SDL2) 
-		# set(INC_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/sdl2-src/include)
-	else()
-		message("[STATUS] SDL2 found.")
-		# set(INC_DIR /usr/include/SDL2)
-	endif()
-	
 	# Add std.cppm to the MOD variable
+	get_filename_component(STD_DIR ${STD_CPPM} DIRECTORY)
 	file(GLOB MOD ${MOD} ${STD})
-
-	# Set test target
-	add_executable(${PROJECT_NAME}-test test/test.cpp ${SRC})
-	set(TARGETS ${TARGETS} ${PROJECT_NAME}-test)
-	# Add testing command
-	add_custom_target(
-		${PROJECT_NAME}-run_test
-		COMMAND $<TARGET_FILE:${PROJECT_NAME}-test>)
-
-	# Set example target
-	add_executable(
-		${PROJECT_NAME}-example EXCLUDE_FROM_ALL example/example.cpp ${SRC}
-	)
-	set(TARGETS ${TARGETS} ${PROJECT_NAME}-example)
-	add_dependencies(${PROJECT_NAME}-example ${PROJECT_NAME}-run_test)
-
-	# Set shared library target
-	add_library(${PROJECT_NAME} SHARED ${SRC})
-	set(TARGETS ${TARGETS} ${PROJECT_NAME})
-	add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}-run_test)
-
-	# Set static library target
-	add_library(${PROJECT_NAME}-static STATIC ${SRC})
-	set(TARGETS ${TARGETS} ${PROJECT_NAME}-static)
-	set_target_properties(
-		${PROJECT_NAME}-static PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
-	)
-
-	# Set shared target settings
-	foreach(T IN LISTS TARGETS)
-		target_link_libraries(${T} PRIVATE SDL2)
-		# target_include_directories(${T} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-		# target_include_directories(${T} PRIVATE ${INC_DIR})
-		target_sources(
-			${T} PRIVATE
-			FILE_SET modules TYPE CXX_MODULES
-			BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${STD_DIR}
-			FILES ${MOD}
-		)
-	endforeach()
 
 endif()
 
-if(WIN32)
-	message("Building on Windows.")
+# Set project name
+project(sdl2-cppm LANGUAGES CXX C)
 
-	# Set project name
-	project(sdl2-cppm CXX C)
-
-	# Get SDL2
+# Make sure SDL2 is available
+find_package(SDL2 2.32.8 QUIET)
+if(NOT SDL2_FOUND)
+	message("[STATUS] Downloading SDL2...")
 	include(FetchContent)
 	FetchContent_Declare(
 		SDL2
@@ -130,55 +65,137 @@ if(WIN32)
 		GIT_TAG release-2.32.x
 	)
 	FetchContent_MakeAvailable(SDL2) 
+else()
+	message("[STATUS] SDL2 found.")
+endif()
 
-	# Set test target
-	add_executable(${PROJECT_NAME}-test test/test.cpp ${SRC})
-	set(TARGETS ${TARGETS} ${PROJECT_NAME}-test)
-	# Add testing command
-	add_custom_target(
-		${PROJECT_NAME}-run_test
-		COMMAND $<TARGET_FILE:${PROJECT_NAME}-test>)
+# Set test target
+add_executable(${PROJECT_NAME}-test test/test.cpp ${SRC})
+set(TARGETS ${TARGETS} ${PROJECT_NAME}-test)
+# Add testing command
+add_custom_target(
+	${PROJECT_NAME}-run_test
+	COMMAND $<TARGET_FILE:${PROJECT_NAME}-test>)
 
-	# # Set example target
-	add_executable(
-		${PROJECT_NAME}-example EXCLUDE_FROM_ALL example/example.cpp ${SRC}
+# Set example target
+add_executable(
+	${PROJECT_NAME}-example EXCLUDE_FROM_ALL example/example.cpp ${SRC}
+)
+set(TARGETS ${TARGETS} ${PROJECT_NAME}-example)
+add_dependencies(${PROJECT_NAME}-example ${PROJECT_NAME}-run_test)
+
+# Set shared library target
+add_library(${PROJECT_NAME} SHARED ${SRC})
+set(TARGETS ${TARGETS} ${PROJECT_NAME})
+add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}-run_test)
+
+# Set static library target
+add_library(${PROJECT_NAME}-static STATIC ${SRC})
+set(TARGETS ${TARGETS} ${PROJECT_NAME}-static)
+set_target_properties(
+	${PROJECT_NAME}-static PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
+)
+
+# Copy face.bpm to build dir - this is necessary if SDL git is used.
+add_custom_command(TARGET ${PROJECT_NAME}-test POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy
+	${CMAKE_CURRENT_SOURCE_DIR}/face.bmp
+	${CMAKE_CURRENT_BINARY_DIR}/face.bmp
+)
+
+# Set shared target settings
+foreach(T IN LISTS TARGETS)
+	target_link_libraries(${T} PRIVATE SDL2)
+	target_sources(
+		${T} PRIVATE
+		FILE_SET modules TYPE CXX_MODULES
+		BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${STD_DIR}
+		FILES ${MOD}
 	)
-	set(TARGETS ${TARGETS} ${PROJECT_NAME}-example)
-	add_dependencies(${PROJECT_NAME}-example ${PROJECT_NAME}-run_test)
-
-	# Set shared library target
-	add_library(${PROJECT_NAME} SHARED ${SRC})
-	set(TARGETS ${TARGETS} ${PROJECT_NAME})
-	add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}-run_test)
-
-	# Set static library target
-	add_library(${PROJECT_NAME}-static STATIC ${SRC})
-	set(TARGETS ${TARGETS} ${PROJECT_NAME}-static)
-	set_target_properties(
-		${PROJECT_NAME}-static PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
-	)
-
-	# Copy face.bpm to build dir
-	add_custom_command(TARGET ${PROJECT_NAME}-test POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy
-		${CMAKE_CURRENT_SOURCE_DIR}/face.bmp
-		${CMAKE_CURRENT_BINARY_DIR}/face.bmp
-	)
-
-	# Set shared target settings
-	foreach(T IN LISTS TARGETS)
-		target_link_libraries(${T} PRIVATE SDL2)
-		target_sources(
-			${T} PRIVATE
-			FILE_SET modules TYPE CXX_MODULES
-			BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${STD_DIR}
-			FILES ${MOD}
-		)
+	if (WIN32)
 		add_custom_command(TARGET ${T} POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E copy
 			$<TARGET_FILE:SDL2>
 			$<TARGET_FILE_DIR:${T}>
 		)
-	endforeach()
+	endif()
+endforeach()
 
-endif()
+# # Set shared target settings
+# foreach(T IN LISTS TARGETS)
+# 	target_link_libraries(${T} PRIVATE SDL2)
+# 	target_sources(
+# 		${T} PRIVATE
+# 		FILE_SET modules TYPE CXX_MODULES
+# 		BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${STD_DIR}
+# 		FILES ${MOD}
+# 	)
+# endforeach()
+#
+# if(WIN32)
+# 	message("Building on Windows.")
+#
+# 	# # Set project name
+# 	# project(sdl2-cppm CXX C)
+#
+# 	# Get SDL2
+# 	include(FetchContent)
+# 	FetchContent_Declare(
+# 		SDL2
+# 		GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+# 		GIT_SHALLOW TRUE
+# 		GIT_TAG release-2.32.x
+# 	)
+# 	FetchContent_MakeAvailable(SDL2) 
+#
+# 	# Set test target
+# 	add_executable(${PROJECT_NAME}-test test/test.cpp ${SRC})
+# 	set(TARGETS ${TARGETS} ${PROJECT_NAME}-test)
+# 	# Add testing command
+# 	add_custom_target(
+# 		${PROJECT_NAME}-run_test
+# 		COMMAND $<TARGET_FILE:${PROJECT_NAME}-test>)
+#
+# 	# # Set example target
+# 	add_executable(
+# 		${PROJECT_NAME}-example EXCLUDE_FROM_ALL example/example.cpp ${SRC}
+# 	)
+# 	set(TARGETS ${TARGETS} ${PROJECT_NAME}-example)
+# 	add_dependencies(${PROJECT_NAME}-example ${PROJECT_NAME}-run_test)
+#
+# 	# Set shared library target
+# 	add_library(${PROJECT_NAME} SHARED ${SRC})
+# 	set(TARGETS ${TARGETS} ${PROJECT_NAME})
+# 	add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}-run_test)
+#
+# 	# Set static library target
+# 	add_library(${PROJECT_NAME}-static STATIC ${SRC})
+# 	set(TARGETS ${TARGETS} ${PROJECT_NAME}-static)
+# 	set_target_properties(
+# 		${PROJECT_NAME}-static PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
+# 	)
+#
+# 	# Copy face.bpm to build dir
+# 	add_custom_command(TARGET ${PROJECT_NAME}-test POST_BUILD
+# 		COMMAND ${CMAKE_COMMAND} -E copy
+# 		${CMAKE_CURRENT_SOURCE_DIR}/face.bmp
+# 		${CMAKE_CURRENT_BINARY_DIR}/face.bmp
+# 	)
+#
+# 	# Set shared target settings
+# 	foreach(T IN LISTS TARGETS)
+# 		target_link_libraries(${T} PRIVATE SDL2)
+# 		target_sources(
+# 			${T} PRIVATE
+# 			FILE_SET modules TYPE CXX_MODULES
+# 			BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${STD_DIR}
+# 			FILES ${MOD}
+# 		)
+# 		add_custom_command(TARGET ${T} POST_BUILD
+# 			COMMAND ${CMAKE_COMMAND} -E copy
+# 			$<TARGET_FILE:SDL2>
+# 			$<TARGET_FILE_DIR:${T}>
+# 		)
+# 	endforeach()
+#
+# endif()
