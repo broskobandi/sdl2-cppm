@@ -10,6 +10,56 @@ for such a project to make sense but I'm going to leave that for another develop
 for now.
 ## Why C++23?
 std::println...
+## Notes for building
+Due to the fact that the project uses the new module system and some c++23 features, 
+the build requirements are somewhat strict.
+### Building on Linux
+For building on Linux, you must use clang++ and ensure that libc++ is installed.
+Installing libc++ will make std.cppm available on your system (which is essential for
+the std library to be present as a c++ module) but its location may be different 
+depending on the distribution you use. On voidlinux, it can be found at 
+/usr/lib/llvm/<VERSION>/share/libc++/v1/std.cppm
+On debian the path is:
+/usr/lib/llvm-<VERSION>/share/libc++/v1/std.cppm
+Locate the std.cppm on your system and passit to cmake when generating the 
+build files. 
+The generator also needs to support libc++ and modules. Because of this,
+the generator must be set to Ninja (ensure Ninja is installed on your system).
+To build the project, use the following method:
+```bash
+# Clone the repo
+git clone https://github.com/broskobandi/sdl2-cppm.git &&
+
+# Create build dir and cd into it
+mkdir sdl2-cppm/build &&
+cd sdl2-cppm/build &&
+
+# Generate build files
+cmake -DCMAKE_CXX_COMPILER=clang++ -DSTD_CPPM=/path/to/std.cppm -GNinja .. &&
+
+# Build the project
+cmake --build .
+```
+### Building on Windows
+The project can be built on Windows using vscode.
+The recommended approach is to open a terminal with alt + t, create a build dir,
+cd into it and simply run
+```bash
+cmake ..
+```
+then
+```bash
+cmake --build .
+```
+No need to specify the generator.
+Simply hitting F7 will result in errors. I'm sure there are configurations available
+in vscode to build the project using the F7 shortcut, but I'm not very familiar 
+with either vscode or windows and I did not want to dig deeper into the subject.
+Installing the cmake extension in vscode and manually calling cmake .. and 
+cmake --build . worked out of the box without needing to edit .json files
+so I think the manual approach is objectively simpler in this instance.
+If you think it is possible/necessary/you know how to make the F7 shortcut work,
+I would welcome your contribution.
 ## Example usage
 ```c
 import sdl2;
@@ -93,4 +143,6 @@ int main(void) {
 ## Todo
 - [x] Add more comments
 - [x] Add example usage in readme
+- [x] Add windows compatibility
+- [ ] Make F7 compile the project in vscode on windows?
 - [ ] Add install() in CMakeLists.txt
