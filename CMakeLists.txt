@@ -105,7 +105,8 @@ add_custom_command(TARGET ${PROJECT_NAME}-test POST_BUILD
 
 # Set shared target settings
 foreach(T IN LISTS TARGETS)
-	target_link_libraries(${T} PRIVATE SDL2)
+	# target_link_libraries(${T} PRIVATE SDL2)
+	target_link_libraries(${T} PUBLIC SDL2)
 	target_sources(
 		${T} PUBLIC
 		FILE_SET modules TYPE CXX_MODULES
