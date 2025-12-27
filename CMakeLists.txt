@@ -107,7 +107,7 @@ add_custom_command(TARGET ${PROJECT_NAME}-test POST_BUILD
 foreach(T IN LISTS TARGETS)
 	target_link_libraries(${T} PRIVATE SDL2)
 	target_sources(
-		${T} PRIVATE
+		${T} PUBLIC
 		FILE_SET modules TYPE CXX_MODULES
 		BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${STD_DIR}
 		FILES ${MOD}
