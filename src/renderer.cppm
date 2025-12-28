@@ -37,6 +37,7 @@ import :texture;
 
 using std::shared_ptr;
 using std::uint32_t;
+using std::uint8_t;
 using std::optional;
 using std::nullopt;
 using std::filesystem::path;
@@ -153,6 +154,12 @@ export class Renderer {
 		 * @param color The color to be used.
 		 * @throw runtime_error. */
 		void set_color_mode(const Texture& tex, Color color) const;
+
+		/** Sets a texture's alpha mode. 
+		 * @param tex The texture to be used. 
+		 * @param alpha The alpha value to be used.
+		 * @throw runtime_error. */
+		void set_alpha_mode(const Texture& tex, uint8_t alpha) const;
 
 		/** Presents the rendered data. */
 		void present() const;

@@ -67,9 +67,12 @@ int main(void) {
 		println("Time since session start: {}", timer.ticks());
 
 		ren.set_color_mode(texture, {255, 255, 0, 255});
+		ren.set_alpha_mode(texture, 255);
 
-		if (event.mouse().has_intersection(rect))
+		if (event.mouse().has_intersection(rect)) {
 			ren.set_color_mode(texture, {255, 0, 0, 255});
+			ren.set_alpha_mode(texture, 128);
+		}
 
 		if (event.mouse().left)
 			ren.set_color_mode(texture, {0, 255, 0, 255});

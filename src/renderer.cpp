@@ -194,4 +194,14 @@ void Renderer::set_color_mode(const Texture& tex, Color color) const {
 	dbg("Texture color mode set.");
 }
 
+/** Sets a texture's alpha mode. 
+ * @param tex The texture to be used. 
+ * @param alpha The alpha value to be used.
+ * @throw runtime_error. */
+void Renderer::set_alpha_mode(const Texture& tex, uint8_t alpha) const {
+	if (SDL_SetTextureAlphaMod(tex.tex, alpha))
+		throw err("Failed to set texture alpha mode.");
+	dbg("Texture alpha mode set.");
+}
+
 }
