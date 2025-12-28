@@ -122,6 +122,7 @@ void Renderer::fill_rect(optional<Rect> rect) const {
 	SDL_Rect r = rect.has_value() ? rect.value().to_sdl() : SDL_Rect{0, 0, 0, 0};
 	SDL_Rect* rptr = rect.has_value() ? &r : nullptr;
 	if (SDL_RenderFillRect(ren, rptr)) throw err("Failed to fill rect.");
+	dbg("Rect filled.");
 }
 
 /** Renders a texture to the render target.
