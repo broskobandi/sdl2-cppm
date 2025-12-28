@@ -38,6 +38,7 @@ import :types;
 
 using std::shared_ptr;
 using std::uint32_t;
+using std::int32_t;
 using std::uint8_t;
 
 namespace sdl2 {
@@ -112,6 +113,13 @@ export class Event {
 			USEREVENT = SDL_USEREVENT,
 			LASTEVENT = SDL_LASTEVENT,
 		};
+		struct Mouse {
+			int32_t x {0};
+			int32_t y {0};
+			bool left {false};
+			bool middle {false};
+			bool right {false};
+		};
 	private:
 		friend class Sdl;
 		SDL_Event event;
@@ -143,6 +151,10 @@ export class Event {
 		 * Requires poll() to be called first.
 		 * @return bool indicating whether the key was pressed. */
 		bool has_scancode(ScanCode scancode) const;
+
+		/** Returns an instance of struct Mouse as POD containing information 
+		 * about the current mouse state. */
+		Mouse mouse() const;
 };
 
 }

@@ -66,6 +66,14 @@ int main(void) {
 
 		println("Time since session start: {}", timer.ticks());
 
+		ren.set_color_mode(texture, {255, 255, 0, 255});
+
+		if (event.mouse().left)
+			ren.set_color_mode(texture, {0, 255, 0, 255});
+
+		if (event.mouse().right)
+			ren.set_color_mode(texture, {0, 0, 255, 255});
+
 		ren.present();
 	}
 

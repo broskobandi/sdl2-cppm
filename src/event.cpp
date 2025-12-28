@@ -29,6 +29,7 @@ module;
 
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_mouse.h>
 
 module sdl2;
 import :event;
@@ -76,6 +77,20 @@ KeyCode Event::keycode() const {
 bool Event::has_scancode(ScanCode scancode) const {
 	if (keystate[+scancode]) return true;
 	return false;
+}
+
+/** Returns an instance of struct Mouse as POD containing information 
+ * about the current mouse state. */
+Event::Mouse Event::mouse() const {
+	Mouse mouse;
+	auto mouse_state = SDL_GetMouseState(&mouse.x, &mouse.y);
+	if (mouse_state & SDL_BUTTON(SDL_BUTTON_LEFT))
+		mouse.left = true;
+	if (mouse_state & SDL_BUTTON(SDL_BUTTON_MIDDLE))
+		mouse.middle = true;
+	if (mouse_state & SDL_BUTTON(SDL_BUTTON_RIGHT))
+		mouse.right = true;
+	return mouse;
 }
 	
 }
