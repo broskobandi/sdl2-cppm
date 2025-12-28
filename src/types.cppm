@@ -57,6 +57,8 @@ export struct Rect {
 	private:
 		friend class Renderer;
 		SDL_Rect to_sdl() const;
+	public:
+		bool has_intersection(const Rect& rect) const;
 };
 
 export struct Color {

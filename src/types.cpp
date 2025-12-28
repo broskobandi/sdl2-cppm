@@ -58,4 +58,10 @@ SDL_Color Color::to_sdl() const {
 	};
 }
 
+bool Rect::has_intersection(const Rect& rect) const {
+	SDL_Rect self = this->to_sdl();
+	SDL_Rect other = rect.to_sdl();
+	return static_cast<bool>(SDL_HasIntersection(&self, &other));
+}
+
 }
