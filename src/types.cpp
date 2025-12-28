@@ -64,4 +64,12 @@ bool Rect::has_intersection(const Rect& rect) const {
 	return static_cast<bool>(SDL_HasIntersection(&self, &other));
 }
 
+bool Point::has_intersection(const Rect& rect) const {
+	SDL_Rect self {
+		x, y, 1, 1
+	};
+	SDL_Rect other = rect.to_sdl();
+	return static_cast<bool>(SDL_HasIntersection(&self, &other));
+}
+
 }

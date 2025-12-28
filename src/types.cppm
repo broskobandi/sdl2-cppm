@@ -40,13 +40,6 @@ export using std::uint32_t;
 export using std::uint8_t;
 using std::underlying_type_t;
 
-export struct Point {
-	int32_t x, y;
-	private:
-		friend class Renderer;
-		SDL_Point to_sdl() const;
-};
-
 export struct Dimensions {
 	uint32_t w, h;
 };
@@ -54,12 +47,23 @@ export struct Dimensions {
 export struct Rect {
 	int32_t x, y;
 	uint32_t w, h;
+	friend class Point;
 	private:
 		friend class Renderer;
 		SDL_Rect to_sdl() const;
 	public:
 		bool has_intersection(const Rect& rect) const;
 };
+
+export struct Point {
+	int32_t x, y;
+	private:
+		friend class Renderer;
+		SDL_Point to_sdl() const;
+	public:
+		bool has_intersection(const Rect& rect) const;
+};
+
 
 export struct Color {
 	uint8_t r, g, b, a;
