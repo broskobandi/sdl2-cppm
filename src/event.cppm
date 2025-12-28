@@ -119,6 +119,7 @@ export class Event {
 			bool left {false};
 			bool middle {false};
 			bool right {false};
+			bool has_intersection(const Rect& rect) const;
 		};
 	private:
 		friend class Sdl;

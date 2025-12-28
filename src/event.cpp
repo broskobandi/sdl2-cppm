@@ -92,5 +92,10 @@ Event::Mouse Event::mouse() const {
 		mouse.right = true;
 	return mouse;
 }
+
+bool Event::Mouse::has_intersection(const Rect& rect) const {
+	Point mouse_pos {x, y};
+	return mouse_pos.has_intersection(rect);
+}
 	
 }
