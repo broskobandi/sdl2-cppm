@@ -74,7 +74,7 @@ Renderer& Renderer::operator=(Renderer&& other) noexcept {
  * @param sur The surface to be used.
  * @throw runtime_error.
  * @return A stack allocted instance of a Texture object. */
-Texture Renderer::texture(const Surface& sur) {
+Texture Renderer::texture(const Surface& sur) const {
 	if (!sur.sur) throw err("nullptr passed to Renderer::texture()");
 	auto tex = SDL_CreateTextureFromSurface(ren, sur.sur);
 	if (!tex) throw err("Failed to create texture from surface.");
@@ -85,7 +85,7 @@ Texture Renderer::texture(const Surface& sur) {
  * @param path_to_bmp Path to the bmp file.
  * @throw runtime_error.
  * @return A stack allocted instance of a Texture object. */
-Texture Renderer::texture(const path& path_to_bmp) {
+Texture Renderer::texture(const path& path_to_bmp) const {
 	Surface sur(path_to_bmp);
 	return texture(sur);
 }

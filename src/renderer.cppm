@@ -88,13 +88,13 @@ export class Renderer {
 		 * @param sur The surface to be used.
 		 * @throw runtime_error.
 		 * @return A stack allocted instance of a Texture object. */
-		Texture texture(const Surface& sur);
+		Texture texture(const Surface& sur) const;
 
 		/** Creates a new Texture from a bmp file.
 		 * @param path_to_bmp Path to the bmp file.
 		 * @throw runtime_error.
 		 * @return A stack allocted instance of a Texture object. */
-		Texture texture(const path& path_to_bmp);
+		Texture texture(const path& path_to_bmp) const;
 
 		/** Sets the renderer's draw color.
 		 * @param color The color to be used.
