@@ -22,6 +22,7 @@ set(BUILD_SHARED_LIBS OFF)
 set(SDL_SHARED OFF)
 set(SDL_STATIC ON)
 file(GLOB_RECURSE MOD src/*.cppm)
+set(SRC src/sdl2.cpp)
 
 project(sdl2-cppm LANGUAGES CXX C)
 
@@ -37,22 +38,49 @@ FetchContent_MakeAvailable(SDL2)
 
 add_executable(${PROJECT_NAME}-test src/test.cpp)
 
+add_library(${PROJECT_NAME}-static STATIC src/sdl2.cpp)
+add_library(${PROJECT_NAME} SHARED src/sdl2.cpp)
+
 if(UNIX)
 	target_compile_options(${PROJECT_NAME}-test PRIVATE
+		-Wall -Wextra -Werror -Wconversion -Wunused-result -Wno-reserved-module-identifier)
+	target_compile_options(${PROJECT_NAME} PRIVATE
+		-Wall -Wextra -Werror -Wconversion -Wunused-result -Wno-reserved-module-identifier)
+	target_compile_options(${PROJECT_NAME}-static PRIVATE
 		-Wall -Wextra -Werror -Wconversion -Wunused-result -Wno-reserved-module-identifier)
 endif()
 
 target_compile_definitions(${PROJECT_NAME}-test PRIVATE SDL_MAIN_HANDLED)
+target_compile_definitions(${PROJECT_NAME} PRIVATE SDL_MAIN_HANDLED)
+target_compile_definitions(${PROJECT_NAME}-static PRIVATE SDL_MAIN_HANDLED)
 
 target_link_libraries(${PROJECT_NAME}-test PRIVATE SDL2::SDL2-static)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2-static)
+target_link_libraries(${PROJECT_NAME}-static PRIVATE SDL2::SDL2-static)
 
 if(UNIX)
 	target_sources(${PROJECT_NAME}-test PRIVATE FILE_SET modules TYPE CXX_MODULES
 		BASE_DIRS ${STD_DIR} ${CMAKE_CURRENT_SOURCE_DIR}
 		FILES ${STD_CPPM} ${MOD}
 	)
+	target_sources(${PROJECT_NAME} PRIVATE FILE_SET modules TYPE CXX_MODULES
+		BASE_DIRS ${STD_DIR} ${CMAKE_CURRENT_SOURCE_DIR}
+		FILES ${STD_CPPM} ${MOD}
+	)
+	target_sources(${PROJECT_NAME}-static PRIVATE FILE_SET modules TYPE CXX_MODULES
+		BASE_DIRS ${STD_DIR} ${CMAKE_CURRENT_SOURCE_DIR}
+		FILES ${STD_CPPM} ${MOD}
+	)
 else()
 	target_sources(${PROJECT_NAME}-test PRIVATE FILE_SET modules TYPE CXX_MODULES
+		BASE_DIRS ${STD_DIR} ${CMAKE_CURRENT_SOURCE_DIR}
+		FILES ${MOD}
+	)
+	target_sources(${PROJECT_NAME} PRIVATE FILE_SET modules TYPE CXX_MODULES
+		BASE_DIRS ${STD_DIR} ${CMAKE_CURRENT_SOURCE_DIR}
+		FILES ${MOD}
+	)
+	target_sources(${PROJECT_NAME}-static PRIVATE FILE_SET modules TYPE CXX_MODULES
 		BASE_DIRS ${STD_DIR} ${CMAKE_CURRENT_SOURCE_DIR}
 		FILES ${MOD}
 	)
