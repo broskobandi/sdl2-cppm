@@ -690,6 +690,11 @@ public:
 		MUL = SDL_BLENDMODE_MUL,
 		INVALID = SDL_BLENDMODE_INVALID,
 	};
+	enum class Flip : std::size_t {
+		NONE = SDL_FLIP_NONE,
+		HORIZONTAL = SDL_FLIP_HORIZONTAL,
+		VERTICAL = SDL_FLIP_VERTICAL,
+	};
 private:
 	friend class Window;
 	SDL_Renderer* ren;
@@ -702,6 +707,88 @@ public:
 	Renderer(Renderer&&) = delete;
 	Renderer& operator=(const Renderer&) = delete;
 	Renderer& operator=(Renderer&&) = delete;
+	void set_blend_mode(BlendMode blend_mode) const {
+		if (SDL_SetRenderDrawBlendMode(ren, static_cast<SDL_BlendMode>(blend_mode)))
+			throw std::runtime_error("Failed to set render draw blendmode.");
+	}
+	void set_draw_color(const Color& color) const {
+		if (SDL_SetRenderDrawColor(ren, color.r, color.g, color.b, color.a))
+			throw std::runtime_error("Failed to set render draw color.");
+	}
+	void clear() const {
+		if (SDL_RenderClear(ren))
+			throw std::runtime_error("Failed to clear renderer.");
+	}
+	void clear(const Color& color) const {
+		set_draw_color(color);
+		clear();
+	}
+	void present() const {
+		SDL_RenderPresent(ren);
+	}
+	Texture create_texture_from_surface(const Surface& surface) const {
+		auto tex = SDL_CreateTextureFromSurface(ren, surface.sur);
+		if (!tex) throw std::runtime_error("Failed to create texture from surface.");
+		return Texture(tex);
+	}
+	void copy(
+		const Texture& tex,
+		std::optional<Rect> srcrect = std::nullopt,
+		std::optional<Rect> dstrect = std::nullopt,
+		float angle = 0.0f,
+		std::optional<Point> center = std::nullopt,
+		Flip flip = Flip::NONE
+	) const {
+		SDL_Rect src =
+			srcrect ? static_cast<SDL_Rect>(*srcrect) : SDL_Rect{0, 0, 0, 0};
+		SDL_Rect dst =
+			dstrect ? static_cast<SDL_Rect>(*dstrect) : SDL_Rect{0, 0, 0, 0};
+		SDL_Point ctr =
+			center ? static_cast<SDL_Point>(*center) : SDL_Point{0, 0};
+		const SDL_Rect* srcptr = srcrect ? &src : nullptr;
+		const SDL_Rect* dstptr = dstrect ? &dst : nullptr;
+		const SDL_Point* ctrptr = center ? &ctr : nullptr;
+		if (SDL_RenderCopyEx(
+			ren,
+			tex.tex,
+			srcptr,
+			dstptr,
+			angle,
+			ctrptr,
+			static_cast<SDL_RendererFlip>(flip))
+		) {
+			throw std::runtime_error("Failed to copy texture.");
+		}
+	}
+	void copy(
+		const Texture& tex,
+		std::optional<Rect> srcrect = std::nullopt,
+		std::optional<FRect> dstrect = std::nullopt,
+		float angle = 0.0f,
+		std::optional<FPoint> center = std::nullopt,
+		Flip flip = Flip::NONE
+	) const {
+		SDL_Rect src =
+			srcrect ? static_cast<SDL_Rect>(*srcrect) : SDL_Rect{0, 0, 0, 0};
+		SDL_FRect dst =
+			dstrect ? static_cast<SDL_FRect>(*dstrect) : SDL_FRect{0, 0, 0, 0};
+		SDL_FPoint ctr =
+			center ? static_cast<SDL_FPoint>(*center) : SDL_FPoint{0, 0};
+		const SDL_Rect* srcptr = srcrect ? &src : nullptr;
+		const SDL_FRect* dstptr = dstrect ? &dst : nullptr;
+		const SDL_FPoint* ctrptr = center ? &ctr : nullptr;
+		if (SDL_RenderCopyExF(
+			ren,
+			tex.tex,
+			srcptr,
+			dstptr,
+			angle,
+			ctrptr,
+			static_cast<SDL_RendererFlip>(flip))
+		) {
+			throw std::runtime_error("Failed to copy texture.");
+		}
+	}
 	~Renderer() {
 		if (ren) SDL_DestroyRenderer(ren);
 	}
@@ -720,8 +807,12 @@ public:
 	Window(Window&&) = delete;
 	Window& operator=(const Window&) = delete;
 	Window& operator=(Window&&) = delete;
-	auto renderer(bool vsync) const {
-		auto ren = SDL_CreateRenderer(win, -1, vsync ? SDL_RENDERER_PRESENTVSYNC : 0);
+	auto renderer(Renderer::Flag init_flags) const {
+		auto ren = SDL_CreateRenderer(
+			win,
+			-1,
+			static_cast<SDL_RendererFlags>(init_flags)
+		);
 		if (!ren) throw std::runtime_error("Failed to create renderer.");
 		return Renderer(ren, shared_from_this());
 	}
@@ -773,7 +864,7 @@ public:
 	}
 };
 
-template<typename T>
+export template<typename T>
 T operator|(const T& a, const T& b) {
 	return static_cast<T>(
 		static_cast<std::underlying_type_t<T>>(a) |
@@ -781,7 +872,7 @@ T operator|(const T& a, const T& b) {
 	);
 }
 
-template<typename T>
+export template<typename T>
 T& operator|=(T& a, const T& b) {
 	return a | b;
 }
