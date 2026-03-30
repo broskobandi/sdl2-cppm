@@ -19,12 +19,22 @@ export struct Rect {
 			static_cast<int>(h),
 		};
 	}
+	bool has_intersection(const Rect& other) const {
+		SDL_Rect this_rect = {x, y, static_cast<int>(w), static_cast<int>(h)};
+		SDL_Rect other_rect = other;
+		return SDL_HasIntersection(&this_rect, &other_rect);
+	}
 };
 
 export struct FRect {
 	float x, y, w, h;
 	operator SDL_FRect() const {
 		return {x, y, w, h};
+	}
+	bool has_intersection(const FRect& other) const {
+		SDL_FRect this_rect = {x, y, w, h};
+		SDL_FRect other_rect = other;
+		return SDL_HasIntersectionF(&this_rect, &other_rect);
 	}
 };
 
@@ -36,12 +46,22 @@ export struct Point {
 			static_cast<int>(y)
 		};
 	}
+	bool has_intersection(const Rect& rect) const {
+		SDL_Rect this_rect = {x, y, 1, 1};
+		SDL_Rect other_rect = rect;
+		return SDL_HasIntersection(&this_rect, &other_rect);
+	}
 };
 
 export struct FPoint {
 	float x, y;
 	operator SDL_FPoint() const {
 		return {x, y};
+	}
+	bool has_intersection(const FRect& rect) const {
+		SDL_FRect this_rect = {x, y, 1.0f, 1.0f};
+		SDL_FRect other_rect = rect;
+		return SDL_HasIntersectionF(&this_rect, &other_rect);
 	}
 };
 
@@ -62,8 +82,13 @@ private:
 	SDL_Surface* sur;
 public:
 	Surface(const std::filesystem::path& path) {
-		auto sur = SDL_LoadBMP(path.string().c_str());
+		sur = SDL_LoadBMP(path.string().c_str());
 		if (!sur) throw std::runtime_error("Failed to create surface from bmp.");
+	}
+	Surface(const std::vector<std::uint8_t>& pixel_data) {
+		auto rw = SDL_RWFromMem((void*)pixel_data.data(), static_cast<int>(pixel_data.size() * sizeof(std::uint8_t)));
+		sur = SDL_LoadBMP_RW(rw, 0);
+		if (!sur) throw std::runtime_error("Failed to create surface from rw.");
 	}
 	Surface(const Surface&) = delete;
 	Surface(Surface&&) = delete;
@@ -104,6 +129,9 @@ private:
 	const std::shared_ptr<const Sdl> sdl;
 	Timer(const std::shared_ptr<const Sdl>& sdl) : sdl(sdl) {}
 public:
+	std::uint32_t ticks() const {
+		return SDL_GetTicks();
+	}
 };
 
 export class Event {
@@ -668,10 +696,25 @@ public:
 	};
 private:
 	friend class Sdl;
-	// SDL_Event event;
+	SDL_Event event;
 	const std::shared_ptr<const Sdl> sdl;
 	Event(const std::shared_ptr<const Sdl>& sdl) : sdl(sdl) {}
 public:
+	bool poll() {
+		return SDL_PollEvent(&event);
+	}
+	Type type() const {
+		return static_cast<Type>(event.type);
+	}
+	KeyCode key_code() const {
+		return static_cast<KeyCode>(event.key.keysym.sym);
+	}
+	bool has_scan_codes(ScanCode scan_code) const {
+		auto sc = static_cast<SDL_Scancode>(scan_code);
+		if (sc > SDL_NUM_SCANCODES)
+			throw std::runtime_error("Invalid scancode.");
+		return SDL_GetKeyboardState(nullptr)[sc];
+	}
 };
 
 export class Renderer {
@@ -726,10 +769,18 @@ public:
 	void present() const {
 		SDL_RenderPresent(ren);
 	}
-	Texture create_texture_from_surface(const Surface& surface) const {
+	Texture texture(const Surface& surface) const {
 		auto tex = SDL_CreateTextureFromSurface(ren, surface.sur);
 		if (!tex) throw std::runtime_error("Failed to create texture from surface.");
 		return Texture(tex);
+	}
+	Texture texture(const std::filesystem::path path_to_bmp) const {
+		Surface sur(path_to_bmp);
+		return texture(sur);
+	}
+	Texture texture(const std::vector<std::uint8_t>& pixel_data) const {
+		Surface sur(pixel_data);
+		return texture(sur);
 	}
 	void copy(
 		const Texture& tex,
